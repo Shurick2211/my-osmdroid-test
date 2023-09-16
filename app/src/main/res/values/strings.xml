@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MyOsmdroid</string>
+    <string name="button">Next random route!</string>
+    <string name="wait">Wait please!</string>
+</resources>
