@@ -50,9 +50,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     }
 
-    public void refresh(){
-        this.refresh();
-    }
+
+
 
 }
 
