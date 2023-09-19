@@ -7,8 +7,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;
 
-import com.nimko.myosmdroid.R;
-
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;

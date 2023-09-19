@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ItemHolder> {
-    private List<ClubNewsStatus> clubNewsStatusList = new ArrayList<>();
+    private List<ClubNewsStatus> clubNewsStatusList;
 
     public MyRecyclerViewAdapter(List<ClubNewsStatus> clubNewsStatusList) {
         this.clubNewsStatusList = clubNewsStatusList;
@@ -49,9 +49,6 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         }
 
     }
-
-
-
 
 }
 

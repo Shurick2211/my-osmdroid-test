@@ -25,7 +25,6 @@ import org.osmdroid.views.MapView;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity {
 
