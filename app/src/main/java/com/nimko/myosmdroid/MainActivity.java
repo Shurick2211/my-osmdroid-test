@@ -4,6 +4,7 @@ import static android.os.FileObserver.ACCESS;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +25,7 @@ import org.osmdroid.views.MapView;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +52,15 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(MainActivity.this, R.string.wait, Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        Intent listIntent = new Intent(this, ListActivity.class);
+        binding.listButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("CLICK","ListActivity");
+                startActivity(listIntent);
             }
         });
 
