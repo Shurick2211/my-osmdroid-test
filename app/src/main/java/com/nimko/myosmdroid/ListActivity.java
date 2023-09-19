@@ -2,7 +2,9 @@ package com.nimko.myosmdroid;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -22,12 +24,16 @@ public class ListActivity extends AppCompatActivity {
 
     private ActivityListBinding binding;
     private List<ClubNewsStatus> listFromApi;
+    @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        listFromApi = new ArrayList<>();
         super.onCreate(savedInstanceState);
         binding = ActivityListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.recycler.setLayoutManager(new LinearLayoutManager(this));
+        MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(listFromApi);
+        binding.recycler.setAdapter(adapter);
 
 
         ApiService api = new ApiService();
@@ -37,7 +43,7 @@ public class ListActivity extends AppCompatActivity {
                 .subscribe(s -> {
                     listFromApi = api.getGetClubStatusList();
                     Log.d("FROM API", listFromApi.toString());
-                    binding.recycler.setAdapter(new MyRecyclerViewAdapter(listFromApi));
+                    adapter.refresh();
                 });
 
 
