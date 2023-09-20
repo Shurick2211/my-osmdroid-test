@@ -20,7 +20,7 @@ public class PermissionUtils {
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
         permissions.add(Manifest.permission.INTERNET);
-        if(Build.VERSION.SDK_INT > 31)
+        if(Build.VERSION.SDK_INT > 32)
             permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         permissions.stream().filter(permission ->

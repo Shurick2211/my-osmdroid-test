@@ -7,5 +7,5 @@ public class Region {
     public String title;
     public String alterTitle;
     public String code;
-    public ArrayList<Object> districts;
+    public ArrayList<District> districts;
 }
