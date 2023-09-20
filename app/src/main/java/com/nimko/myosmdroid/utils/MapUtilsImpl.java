@@ -3,6 +3,7 @@ package com.nimko.myosmdroid.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;
@@ -43,10 +44,12 @@ public class MapUtilsImpl implements MapUtils{
     }
 
     @Override
-    public void addMarker(GeoPoint point) {
+    @SuppressLint({"UseCompatLoadingForDrawables"})
+    public void addMarker(GeoPoint point, MarkImg icon) {
         Marker startMarker = new Marker(map);
         startMarker.setPosition(point);
         startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+        startMarker.setIcon(context.getDrawable(icon.getId()));
         map.getOverlays().add(startMarker);
         map.getController().setCenter(point);
     }
@@ -68,7 +71,7 @@ public class MapUtilsImpl implements MapUtils{
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
-                    addMarker(end);
+                    addMarker(end, MarkImg.FINISH);
                     map.getOverlays().add(s);
                     map.invalidate();
                 });
@@ -77,7 +80,7 @@ public class MapUtilsImpl implements MapUtils{
     @Override
     public void deleteLastRout() {
         map.getOverlays().clear();
-        addMarker(getMyLocation());
+        addMarker(getMyLocation(),MarkImg.I_AM);
         map.invalidate();
     }
 

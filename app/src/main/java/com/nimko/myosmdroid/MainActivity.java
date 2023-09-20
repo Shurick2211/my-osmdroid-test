@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.nimko.myosmdroid.databinding.ActivityMainBinding;
 import com.nimko.myosmdroid.utils.MapUtils;
 import com.nimko.myosmdroid.utils.MapUtilsImpl;
+import com.nimko.myosmdroid.utils.MarkImg;
 import com.nimko.myosmdroid.utils.PermissionUtils;
 
 import org.osmdroid.util.GeoPoint;
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         map = binding.mapview;
         mapUtils = new MapUtilsImpl(map, this);
         GeoPoint myLocation = mapUtils.getMyLocation();
-        mapUtils.addMarker(myLocation);
+        mapUtils.addMarker(myLocation, MarkImg.I_AM);
         mapUtils.buildRout(myLocation, MapUtilsImpl.getRandomPoint(myLocation));
     }
 
