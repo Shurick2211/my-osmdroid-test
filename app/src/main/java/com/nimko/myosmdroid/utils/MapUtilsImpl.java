@@ -3,7 +3,6 @@ package com.nimko.myosmdroid.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;

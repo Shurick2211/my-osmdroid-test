@@ -1,5 +1,6 @@
 package com.nimko.myosmdroid.adapter;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -12,10 +13,16 @@ import com.nimko.myosmdroid.models.fromApi.ClubNewsStatus;
 import java.util.List;
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ItemHolder> {
-    private final List<ClubNewsStatus> clubNewsStatusList;
+    private List<ClubNewsStatus> clubNewsStatusList;
 
     public MyRecyclerViewAdapter(List<ClubNewsStatus> clubNewsStatusList) {
         this.clubNewsStatusList = clubNewsStatusList;
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void setClubNewsStatusList(List<ClubNewsStatus> clubNewsStatusList) {
+        this.clubNewsStatusList = clubNewsStatusList;
+        this.notifyDataSetChanged();
     }
 
     @NonNull
