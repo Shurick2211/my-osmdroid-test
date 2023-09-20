@@ -17,17 +17,17 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class MapUtilsImpl implements MapUtils{
-    private MapView map;
-    private Context context;
-    private int idRout = 0;
+    private final MapView map;
+    private final Context context;
+
+    private static final double DEGREE_RADIUS = 0.5;
     private static final String MY_USER_AGENT = System.getProperty("http.agent");
     private final static double START_ZOOM = 13.5;
     private static final GeoPoint DEFAULT_POINT = new GeoPoint(50.0,36.25);
@@ -70,7 +70,6 @@ public class MapUtilsImpl implements MapUtils{
                 .subscribe(s -> {
                     addMarker(end);
                     map.getOverlays().add(s);
-                    idRout = map.getOverlays().size() - 1;
                     map.invalidate();
                 });
     }
@@ -84,16 +83,28 @@ public class MapUtilsImpl implements MapUtils{
 
 
     private Single<Polyline> getLine(GeoPoint start, GeoPoint end){
-        return Single.create(new SingleOnSubscribe<Polyline>() {
-            @Override
-            public void subscribe(SingleEmitter<Polyline> emitter) throws Exception {
-                ArrayList<GeoPoint> waypoints = new ArrayList<>();
-                waypoints.add(start);
-                waypoints.add(end);
-                RoadManager roadManager = new OSRMRoadManager(context, MY_USER_AGENT);
-                Road road = roadManager.getRoad(waypoints);
-                emitter.onSuccess(RoadManager.buildRoadOverlay(road));
-            }
+        return Single.create(emitter -> {
+            ArrayList<GeoPoint> waypoints = new ArrayList<>();
+            waypoints.add(start);
+            waypoints.add(end);
+            RoadManager roadManager = new OSRMRoadManager(context, MY_USER_AGENT);
+            Road road = roadManager.getRoad(waypoints);
+            emitter.onSuccess(RoadManager.buildRoadOverlay(road));
         });
+    }
+
+    public static GeoPoint getRandomPoint(GeoPoint myPoint){
+        return new GeoPoint(
+                getRandomValue(myPoint.getLatitude()),
+                getRandomValue(myPoint.getLongitude()));
+    }
+
+    private static Double getRandomValue(double value){
+        Random random = new Random();
+        if (random.nextBoolean())
+            value += random.nextGaussian() * MapUtilsImpl.DEGREE_RADIUS;
+        else
+            value -= random.nextGaussian() * MapUtilsImpl.DEGREE_RADIUS;
+        return value;
     }
 }

@@ -3,14 +3,14 @@ package com.nimko.myosmdroid.api_service;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.nimko.myosmdroid.models.fromApi.ClubNewsStatus;
 import com.nimko.myosmdroid.models.fromApi.Root;
 
 import java.util.ArrayList;
 
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiService {
 
-    private  RestApiRequest apiRequest;
+    private final RestApiRequest apiRequest;
     public ApiService() {
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -33,23 +33,17 @@ public class ApiService {
 
     public Single<ArrayList<ClubNewsStatus>> getClubNewsStatus(){
 
-        return Single.create(new SingleOnSubscribe<ArrayList<ClubNewsStatus>>() {
+        return Single.create(emitter -> apiRequest.getData().enqueue(new Callback<Root>() {
             @Override
-            public void subscribe(SingleEmitter<ArrayList<ClubNewsStatus>> emitter) throws Exception {
-
-                apiRequest.getData().enqueue(new Callback<Root>() {
-                    @Override
-                    public void onResponse(Call<Root> call, Response<Root> response) {
-                        Log.d("API_SERVICE", response.body().toString());
-                        emitter.onSuccess(response.body().clubNewsStatuses);
-                    }
-
-                    @Override
-                    public void onFailure(Call<Root> call, Throwable t) {
-                        Log.d("API_SERVICE", t.toString());
-                    }
-                });
+            public void onResponse(@NonNull Call<Root> call, @NonNull Response<Root> response) {
+                assert response.body() != null;
+                emitter.onSuccess(response.body().clubNewsStatuses);
             }
-        });
+
+            @Override
+            public void onFailure(@NonNull Call<Root> call, @NonNull Throwable t) {
+                Log.d("API_SERVICE", t.toString());
+            }
+        }));
     }
 }

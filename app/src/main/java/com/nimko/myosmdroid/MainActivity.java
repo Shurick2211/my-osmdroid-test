@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import com.nimko.myosmdroid.databinding.ActivityMainBinding;
 import com.nimko.myosmdroid.utils.MapUtils;
 import com.nimko.myosmdroid.utils.MapUtilsImpl;
+import com.nimko.myosmdroid.utils.PermissionUtils;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -28,7 +29,6 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final double DEGREE_RADIUS = 0.5;
     private ActivityMainBinding binding;
     private MapView map;
     private  MapUtils mapUtils;
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 if(map.getOverlays().size() > 1) {
                     GeoPoint myLocation = mapUtils.getMyLocation();
                     mapUtils.deleteLastRout();
-                    mapUtils.buildRout(myLocation, getRandomPoint(myLocation));
+                    mapUtils.buildRout(myLocation, MapUtilsImpl.getRandomPoint(myLocation));
                 } else {
                     Toast.makeText(MainActivity.this, R.string.wait, Toast.LENGTH_SHORT).show();
                 }
@@ -92,47 +92,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void checkPermission() {
-        String [] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.INTERNET
-        };
-
-        for (String permission:permissions) {
-            if (ContextCompat.checkSelfPermission(this, permission) !=
-                    PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                        this, new String[]{permission},
-                        ACCESS
-                );
-            }
-        }
-    }
     @SuppressLint("CheckResult")
     private void init(){
-        checkPermission();
+        PermissionUtils.checkPermission(this);
         map = binding.mapview;
         mapUtils = new MapUtilsImpl(map, this);
         GeoPoint myLocation = mapUtils.getMyLocation();
         mapUtils.addMarker(myLocation);
-        mapUtils.buildRout(myLocation, getRandomPoint(myLocation));
-
+        mapUtils.buildRout(myLocation, MapUtilsImpl.getRandomPoint(myLocation));
     }
 
-    private GeoPoint getRandomPoint(GeoPoint myPoint){
-        return new GeoPoint(
-                getRandomValue(myPoint.getLatitude(), DEGREE_RADIUS),
-                getRandomValue(myPoint.getLongitude(), DEGREE_RADIUS));
-    }
 
-    private Double getRandomValue(double value, double radius){
-        Random random = new Random();
-        if (random.nextBoolean())
-            value += random.nextGaussian() * radius;
-        else
-            value -= random.nextGaussian() * radius;
-        return value;
-    }
 }
