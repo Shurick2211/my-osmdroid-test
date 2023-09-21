@@ -15,6 +15,8 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -45,17 +47,17 @@ public class MapUtilsImpl implements MapUtils{
     @Override
     @SuppressLint({"UseCompatLoadingForDrawables"})
     public void addMarker(GeoPoint point, MarkImg icon) {
-        Marker startMarker = new Marker(map);
-        startMarker.setPosition(point);
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
-        startMarker.setIcon(context.getDrawable(icon.getId()));
-        map.getOverlays().add(startMarker);
+        Marker marker = new Marker(map);
+        marker.setPosition(point);
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+        marker.setIcon(context.getDrawable(icon.getId()));
+        map.getOverlays().add(marker);
         map.getController().setCenter(point);
     }
 
     @Override
     @SuppressLint("MissingPermission")
-    public GeoPoint getMyLocation() {
+    public GeoPoint getMyStartLocation() {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         return myLocation != null ?
@@ -65,22 +67,33 @@ public class MapUtilsImpl implements MapUtils{
 
     @SuppressLint("CheckResult")
     @Override
+    public void getMyLocation() {
+        getLocation().observeOn(Schedulers.computation())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .doOnSuccess(myLocationNewOverlay -> {
+                    map.getOverlays().add(myLocationNewOverlay);
+                    map.invalidate();
+                }).subscribe();
+    }
+
+    @SuppressLint("CheckResult")
+    @Override
     public void buildRout(GeoPoint start, GeoPoint end) {
         getLine(start, end)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
+                .doOnSuccess(s -> {
+                    addMarker(getMyStartLocation(),MarkImg.START);
                     addMarker(end, MarkImg.FINISH);
                     map.getOverlays().add(s);
                     map.invalidate();
-                });
+                }).subscribe();
+        getMyLocation();
     }
 
     @Override
     public void deleteLastRout() {
         map.getOverlays().clear();
-        addMarker(getMyLocation(),MarkImg.I_AM);
-        map.invalidate();
     }
 
 
@@ -108,5 +121,13 @@ public class MapUtilsImpl implements MapUtils{
         else
             value -= random.nextGaussian() * MapUtilsImpl.DEGREE_RADIUS;
         return value;
+    }
+
+    private Single<MyLocationNewOverlay> getLocation(){
+        return Single.create(emitter -> {
+            MyLocationNewOverlay mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context),map);
+            mLocationOverlay.enableMyLocation();
+            emitter.onSuccess(mLocationOverlay);
+        });
     }
 }

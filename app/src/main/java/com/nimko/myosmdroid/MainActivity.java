@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.nimko.myosmdroid.databinding.ActivityMainBinding;
 import com.nimko.myosmdroid.utils.MapUtils;
 import com.nimko.myosmdroid.utils.MapUtilsImpl;
-import com.nimko.myosmdroid.utils.MarkImg;
 import com.nimko.myosmdroid.utils.PermissionUtils;
 
 import org.osmdroid.util.GeoPoint;
@@ -36,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         binding.button.setOnClickListener(v -> {
             Log.d("BUTTON", "overlays size: "+map.getOverlays().size());
             if(map.getOverlays().size() > 1) {
-                GeoPoint myLocation = mapUtils.getMyLocation();
+                GeoPoint myLocation = mapUtils.getMyStartLocation();
                 mapUtils.deleteLastRout();
                 mapUtils.buildRout(myLocation, MapUtilsImpl.getRandomPoint(myLocation));
             } else {
@@ -77,8 +76,7 @@ public class MainActivity extends AppCompatActivity {
         PermissionUtils.checkPermission(this);
         map = binding.mapview;
         mapUtils = new MapUtilsImpl(map, this);
-        GeoPoint myLocation = mapUtils.getMyLocation();
-        mapUtils.addMarker(myLocation, MarkImg.I_AM);
+        GeoPoint myLocation = mapUtils.getMyStartLocation();
         mapUtils.buildRout(myLocation, MapUtilsImpl.getRandomPoint(myLocation));
     }
 
