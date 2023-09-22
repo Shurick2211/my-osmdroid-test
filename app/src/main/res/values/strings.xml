@@ -3,4 +3,7 @@
     <string name="button">Next random route!</string>
     <string name="wait">Wait please!</string>
     <string name="listButton">Go to list!</string>
+    <string name="distance">Distance:</string>
+    <string name="km">km.</string>
+    <string name="start">Start!</string>
 </resources>

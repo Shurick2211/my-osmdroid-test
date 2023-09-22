@@ -5,7 +5,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
-import android.preference.PreferenceManager;
+
+import com.nimko.myosmdroid.R;
 
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
@@ -18,6 +19,7 @@ import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -36,9 +38,10 @@ public class MapUtilsImpl implements MapUtils{
 
     public MapUtilsImpl(MapView map, Context context) {
         Configuration.getInstance().load(context,
-                PreferenceManager.getDefaultSharedPreferences(context));
+                context.getSharedPreferences("MyOsmDroid", Context.MODE_PRIVATE));
         map.setMultiTouchControls(true);
         map.getController().setZoom(START_ZOOM);
+        map.getController().setCenter(DEFAULT_POINT);
         this.map = map;
         this.context = context;
 
@@ -46,11 +49,12 @@ public class MapUtilsImpl implements MapUtils{
 
     @Override
     @SuppressLint({"UseCompatLoadingForDrawables"})
-    public void addMarker(GeoPoint point, MarkImg icon) {
+    public void addMarker(GeoPoint point, MarkImg icon, String text) {
         Marker marker = new Marker(map);
         marker.setPosition(point);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
         marker.setIcon(context.getDrawable(icon.getId()));
+        if (text != null) marker.setTitle(text);
         map.getOverlays().add(marker);
         map.getController().setCenter(point);
     }
@@ -76,15 +80,19 @@ public class MapUtilsImpl implements MapUtils{
                 }).subscribe();
     }
 
-    @SuppressLint("CheckResult")
+    @SuppressLint({"CheckResult"})
     @Override
     public void buildRout(GeoPoint start, GeoPoint end) {
         getLine(start, end)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess(s -> {
-                    addMarker(getMyStartLocation(),MarkImg.START);
-                    addMarker(end, MarkImg.FINISH);
+                    addMarker(getMyStartLocation(),MarkImg.START, context.getString(R.string.start));
+                    DecimalFormat numForm = new DecimalFormat("#.##");
+                    addMarker(end, MarkImg.FINISH,
+                            context.getString(R.string.distance)
+                                    + numForm.format(s.getDistance()/1000)
+                                    + context.getString(R.string.km));
                     map.getOverlays().add(s);
                     map.invalidate();
                 }).subscribe();

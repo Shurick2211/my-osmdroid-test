@@ -34,10 +34,7 @@ public class ListActivity extends AppCompatActivity {
         api.getClubNewsStatus()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    adapter.setClubNewsStatusList(s);
-                });
-
-
+                .doOnSuccess(s -> adapter.setClubNewsStatusList(s))
+                .subscribe();
     }
 }
